@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Fixes Ngnix server
-new_string="listen 80 default_server;"
-old_string="listen 8080 default_server;"
-sudo sed -i "s/$old_string/$new_string/" /etc/nginx/sites-enabled/default
-sudo sed -i '22d' /etc/nginx/sites-enabled/default
+# script to link sites-enabled to sites-available and start nginx without running status
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 sudo service nginx start
+rm /run/nginx.pid
