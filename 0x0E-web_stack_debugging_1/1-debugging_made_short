@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# script to link sites-enabled to sites-available and start nginx without running status
-ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Fixes Ngnix server
+sudo sed -i "s/8080/80/" /etc/nginx/sites-enabled/default
 sudo service nginx start
-rm /run/nginx.pid
+kill "$(pgrep nginx | head -1)"
