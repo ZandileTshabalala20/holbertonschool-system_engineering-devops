@@ -1,30 +1,34 @@
 #!/usr/bin/python3
-"""For a given employee ID, returns information about
-their TODO list progress"""
-
+"""using a REST API, for a given employee ID, returns information about
+his/her TODO list progress"""
 import requests
-import sys
+from sys import argv
+
 
 if __name__ == "__main__":
+    """Your code should not be executed when imported"""
 
-    userId = sys.argv[1]
-    user = requests.get("https://jsonplaceholder.typicode.com/users/{}"
-                        .format(userId))
+    user_id = argv[1]
 
-    name = user.json().get('name')
+    todos = requests.get(
+        "http://jsonplaceholder.typicode.com/todos?userId={}".format(
+            user_id))
+    user = requests.get(
+        "http://jsonplaceholder.typicode.com/users/{}".format(
+            user_id))
 
-    todos = requests.get('https://jsonplaceholder.typicode.com/todos')
-    totalTasks = 0
-    completed = 0
-
-    for task in todos.json():
-        if task.get('userId') == int(userId):
-            totalTasks += 1
-            if task.get('completed'):
+    if len(user.json()):
+        total = 0
+        completed = 0
+        tasks_list = []
+        for tarea in todos.json():
+            total += 1
+            if tarea.get("completed") is True:
                 completed += 1
+                tasks_list.append(tarea.get("title"))
 
-    print('Employee {} is done with tasks({}/{}):'
-          .format(name, completed, totalTasks))
-
-    print('\n'.join(["\t " + task.get('title') for task in todos.json()
-          if task.get('userId') == int(userId) and task.get('completed')]))
+        print(
+            "Employee {} is done with tasks({}/{}):".format(
+                user.json().get("name"), completed, total))
+        for task in tasks_list:
+            print("\t {}".format(task))

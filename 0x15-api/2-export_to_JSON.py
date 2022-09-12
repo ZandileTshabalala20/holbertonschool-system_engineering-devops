@@ -1,29 +1,29 @@
 #!/usr/bin/python3
-"""Exports data in the JSON format"""
+"""extend your Python script to export data in the JSON format"""
+import json
+import requests
+from sys import argv
+
 
 if __name__ == "__main__":
+    """Your code should not be executed when imported"""
 
-    import json
-    import requests
-    import sys
+    user_id = argv[1]
 
-    userId = sys.argv[1]
-    user = requests.get("https://jsonplaceholder.typicode.com/users/{}"
-                        .format(userId))
-    todos = requests.get('https://jsonplaceholder.typicode.com/todos')
-    todos = todos.json()
+    todos = requests.get(
+        "http://jsonplaceholder.typicode.com/todos?userId={}".format(
+            user_id))
+    user = requests.get(
+        "http://jsonplaceholder.typicode.com/users/{}".format(
+            user_id))
 
-    todoUser = {}
-    taskList = []
-
-    for task in todos:
-        if task.get('userId') == int(userId):
-            taskDict = {"task": task.get('title'),
-                        "completed": task.get('completed'),
-                        "username": user.json().get('username')}
-            taskList.append(taskDict)
-    todoUser[userId] = taskList
-
-    filename = userId + '.json'
-    with open(filename, mode='w') as f:
-        json.dump(todoUser, f)
+    out = {user.json().get('id'): []}
+    with open('{}.csv'.format(user_id), "w") as output:
+        for tarea in todos.json():
+            data = {
+                'task': tarea.get('title'),
+                'completed': tarea.get('completed'),
+                'username': user.json().get('username')
+            }
+            out.get(user.json().get('id')).append(data)
+        json.dump(out, output)
