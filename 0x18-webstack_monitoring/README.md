@@ -1,1 +1,1 @@
-This file contains the access ID and key to sumologic
+monitorig set-up
